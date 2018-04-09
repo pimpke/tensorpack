@@ -24,7 +24,7 @@ def maybe_freeze_affine(getter, *args, **kwargs):
 
 @contextmanager
 def resnet_argscope():
-    with argscope([Conv2D, MaxPooling, BatchNorm], data_format='channels_first'), \
+    with argscope([Conv2D, MaxPooling, BatchNorm], data_format='channels_last'), \
             argscope(Conv2D, use_bias=False), \
             argscope(BatchNorm, training=False), \
             custom_getter_scope(maybe_freeze_affine):

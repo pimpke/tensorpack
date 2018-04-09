@@ -34,7 +34,7 @@ def rpn_head(featuremap, channel, num_anchors):
         label_logits: fHxfWxNA
         box_logits: fHxfWxNAx4
     """
-    with argscope(Conv2D, data_format='channels_first',
+    with argscope(Conv2D, data_format='channels_last',
                   kernel_initializer=tf.random_normal_initializer(stddev=0.01)):
         hidden = Conv2D('conv0', featuremap, channel, 3, activation=tf.nn.relu)
 
@@ -376,7 +376,7 @@ def roi_align(featuremap, boxes, output_shape):
         featuremap, boxes,
         tf.zeros([tf.shape(boxes)[0]], dtype=tf.int32),
         output_shape * 2)
-    ret = tf.nn.avg_pool(ret, [1, 1, 2, 2], [1, 1, 2, 2], padding='SAME', data_format='NCHW')
+    ret = tf.nn.avg_pool(ret, [1, 1, 2, 2], [1, 1, 2, 2], padding='SAME', data_format='NHWC')
     return ret
 
 
@@ -390,7 +390,7 @@ def fastrcnn_head(feature, num_classes):
     Returns:
         cls_logits (Nxnum_class), reg_logits (Nx num_class-1 x 4)
     """
-    feature = GlobalAvgPooling('gap', feature, data_format='channels_first')
+    feature = GlobalAvgPooling('gap', feature, data_format='channels_last')
     classification = FullyConnected(
         'class', feature, num_classes,
         kernel_initializer=tf.random_normal_initializer(stddev=0.01))
@@ -507,7 +507,7 @@ def maskrcnn_head(feature, num_class):
     Returns:
         mask_logits (N x num_category x 14 x 14):
     """
-    with argscope([Conv2D, Conv2DTranspose], data_format='channels_first',
+    with argscope([Conv2D, Conv2DTranspose], data_format='channels_last',
                   kernel_initializer=tf.variance_scaling_initializer(
                       scale=2.0, mode='fan_out', distribution='normal')):
         # c2's MSRAFill is fan_out
