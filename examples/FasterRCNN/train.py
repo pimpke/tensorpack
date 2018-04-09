@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 # File: train.py
 
+import sys
+sys.path.append("tensorpack")
+
 import os
 import argparse
 import cv2
