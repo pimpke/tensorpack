@@ -76,7 +76,8 @@ class Model(ModelDesc):
     def _preprocess(self, image):
         image = tf.expand_dims(image, 0)
         image = image_preprocess(image, bgr=True)
-        return tf.transpose(image, [0, 3, 1, 2])
+        return image
+        # return tf.transpose(image, [0, 3, 1, 2])
 
     def _get_anchors(self, shape2d):
         """
